@@ -52,25 +52,109 @@ const List<OpenSpoolManufacturer> openSpoolManufacturers = [
   OpenSpoolManufacturer(0, 'Generic'),
   OpenSpoolManufacturer(1, 'Snapmaker'),
   OpenSpoolManufacturer(2, 'SUNLU'),
-  OpenSpoolManufacturer(3, 'eSun'),
+  OpenSpoolManufacturer(3, 'eSUN'),
   OpenSpoolManufacturer(4, 'Jayo'),
   OpenSpoolManufacturer(5, 'QIDI'),
   OpenSpoolManufacturer(6, 'Bambu Lab'),
   OpenSpoolManufacturer(7, 'Polymaker'),
   OpenSpoolManufacturer(8, 'TECBEARS'),
-  OpenSpoolManufacturer(9, 'GIANTARM'),
+  OpenSpoolManufacturer(9, 'Giantarm'),
   OpenSpoolManufacturer(10, 'HATCHBOX'),
-  OpenSpoolManufacturer(11, 'Overture'),
+  OpenSpoolManufacturer(11, 'OVERTURE'),
   OpenSpoolManufacturer(12, 'Prusament'),
   OpenSpoolManufacturer(13, 'TINMORRY'),
   OpenSpoolManufacturer(14, 'Kingroon'),
-  OpenSpoolManufacturer(15, 'Elegoo'),
+  OpenSpoolManufacturer(15, 'ELEGOO'),
   OpenSpoolManufacturer(16, 'Creality'),
   OpenSpoolManufacturer(17, 'Deeplee'),
-  OpenSpoolManufacturer(18, 'ANYCUBIC'),
+  OpenSpoolManufacturer(18, 'Anycubic'),
   OpenSpoolManufacturer(19, 'FLASHFORGE'),
   OpenSpoolManufacturer(20, 'CC3D'),
-  OpenSpoolManufacturer(21, 'ZIRO'),
+  OpenSpoolManufacturer(21, 'Ziro'),
+  OpenSpoolManufacturer(22, '3Dgenius'),
+  OpenSpoolManufacturer(23, '3DJake'),
+  OpenSpoolManufacturer(24, '3DXTECH'),
+  OpenSpoolManufacturer(25, '3D BEST-Q'),
+  OpenSpoolManufacturer(26, '3D Hero'),
+  OpenSpoolManufacturer(27, '3D-Fuel'),
+  OpenSpoolManufacturer(28, 'Aceaddity'),
+  OpenSpoolManufacturer(29, 'AddNorth'),
+  OpenSpoolManufacturer(30, 'Amazon Basics'),
+  OpenSpoolManufacturer(31, 'AMOLEN'),
+  OpenSpoolManufacturer(32, 'Ankermake'),
+  OpenSpoolManufacturer(33, 'Atomic'),
+  OpenSpoolManufacturer(34, 'AzureFilm'),
+  OpenSpoolManufacturer(35, 'BASF'),
+  OpenSpoolManufacturer(36, 'Bblife'),
+  OpenSpoolManufacturer(37, 'BCN3D'),
+  OpenSpoolManufacturer(38, 'Beyond Plastic'),
+  OpenSpoolManufacturer(39, 'California Filament'),
+  OpenSpoolManufacturer(40, 'Capricorn'),
+  OpenSpoolManufacturer(41, 'colorFabb'),
+  OpenSpoolManufacturer(42, 'Comgrow'),
+  OpenSpoolManufacturer(43, 'Cookiecad'),
+  OpenSpoolManufacturer(44, 'CERPRiSE'),
+  OpenSpoolManufacturer(45, 'Das Filament'),
+  OpenSpoolManufacturer(46, 'DO3D'),
+  OpenSpoolManufacturer(47, 'DOW'),
+  OpenSpoolManufacturer(48, 'DSM'),
+  OpenSpoolManufacturer(49, 'Duramic'),
+  OpenSpoolManufacturer(50, 'Eryone'),
+  OpenSpoolManufacturer(51, 'Essentium'),
+  OpenSpoolManufacturer(52, 'Extrudr'),
+  OpenSpoolManufacturer(53, 'Fiberforce'),
+  OpenSpoolManufacturer(54, 'Fiberlogy'),
+  OpenSpoolManufacturer(55, 'FilaCube'),
+  OpenSpoolManufacturer(56, 'Filamentive'),
+  OpenSpoolManufacturer(57, 'Fillamentum'),
+  OpenSpoolManufacturer(58, 'Formfutura'),
+  OpenSpoolManufacturer(59, 'Francofil'),
+  OpenSpoolManufacturer(60, 'FilamentOne'),
+  OpenSpoolManufacturer(61, 'Fil X'),
+  OpenSpoolManufacturer(62, 'GEEETECH'),
+  OpenSpoolManufacturer(63, 'Gizmo Dorks'),
+  OpenSpoolManufacturer(64, 'GreenGate3D'),
+  OpenSpoolManufacturer(65, 'Hello3D'),
+  OpenSpoolManufacturer(66, 'IC3D'),
+  OpenSpoolManufacturer(67, 'IEMAI'),
+  OpenSpoolManufacturer(68, 'IIID Max'),
+  OpenSpoolManufacturer(69, 'INLAND'),
+  OpenSpoolManufacturer(70, 'iProspect'),
+  OpenSpoolManufacturer(71, 'iSANMATE'),
+  OpenSpoolManufacturer(72, 'Justmaker'),
+  OpenSpoolManufacturer(73, 'Keene Village Plastics'),
+  OpenSpoolManufacturer(74, 'Kexcelled'),
+  OpenSpoolManufacturer(75, 'LDO'),
+  OpenSpoolManufacturer(76, 'MakerBot'),
+  OpenSpoolManufacturer(77, 'MatterHackers'),
+  OpenSpoolManufacturer(78, 'MIKA3D'),
+  OpenSpoolManufacturer(79, 'NinjaTek'),
+  OpenSpoolManufacturer(80, 'Nobufil'),
+  OpenSpoolManufacturer(81, 'Novamaker'),
+  OpenSpoolManufacturer(82, 'OVVNYXE'),
+  OpenSpoolManufacturer(83, 'Priline'),
+  OpenSpoolManufacturer(84, 'Printed Solid'),
+  OpenSpoolManufacturer(85, 'Protopasta'),
+  OpenSpoolManufacturer(86, 'Push Plastic'),
+  OpenSpoolManufacturer(87, 'R3D'),
+  OpenSpoolManufacturer(88, 'Re-pet3D'),
+  OpenSpoolManufacturer(89, 'Recreus'),
+  OpenSpoolManufacturer(90, 'Regen'),
+  OpenSpoolManufacturer(91, 'Sain SMART'),
+  OpenSpoolManufacturer(92, 'SliceWorx'),
+  OpenSpoolManufacturer(93, 'SnoLabs'),
+  OpenSpoolManufacturer(94, 'Spectrum'),
+  OpenSpoolManufacturer(95, 'TTYT3D'),
+  OpenSpoolManufacturer(96, 'Tianse'),
+  OpenSpoolManufacturer(97, 'UltiMaker'),
+  OpenSpoolManufacturer(98, 'Valment'),
+  OpenSpoolManufacturer(99, 'Verbatim'),
+  OpenSpoolManufacturer(100, 'VO3D'),
+  OpenSpoolManufacturer(101, 'Voxelab'),
+  OpenSpoolManufacturer(102, 'VOXELPLA'),
+  OpenSpoolManufacturer(103, 'YOOPAI'),
+  OpenSpoolManufacturer(104, 'Yousu'),
+  OpenSpoolManufacturer(105, 'Zyltech'),
 ];
 
 const List<String> openSpoolDefaultSubtypes = [
@@ -151,6 +235,10 @@ String normalizeAlphaHex(String? value) {
   return alpha.substring(0, 2);
 }
 
+String newOpenSpoolTagId() {
+  return DateTime.now().millisecondsSinceEpoch.toString();
+}
+
 class OpenSpoolTagData {
   const OpenSpoolTagData({
     required this.type,
@@ -158,6 +246,7 @@ class OpenSpoolTagData {
     this.brand,
     this.subtype,
     this.alpha,
+    this.id,
     this.minTemp,
     this.maxTemp,
     this.bedMinTemp,
@@ -175,6 +264,7 @@ class OpenSpoolTagData {
   final String? brand;
   final String? subtype;
   final String? alpha;
+  final String? id;
   final int? minTemp;
   final int? maxTemp;
   final int? bedMinTemp;
@@ -202,21 +292,21 @@ class OpenSpoolTagData {
       json['brand'] = trimmedBrand;
     }
 
-    if (tier != OpenSpoolTier.basic) {
-      if (minTemp != null) {
-        json['min_temp'] = minTemp;
-      }
-      if (maxTemp != null) {
-        json['max_temp'] = maxTemp;
-      }
+    if (minTemp != null) {
+      json['min_temp'] = minTemp;
+    }
+    if (maxTemp != null) {
+      json['max_temp'] = maxTemp;
     }
 
     final isU1 = profile == OpenSpoolProfile.u1;
-    if (isU1 && tier != OpenSpoolTier.basic) {
-      final trimmedSubtype = subtype?.trim() ?? '';
-      if (trimmedSubtype.isNotEmpty) {
-        json['subtype'] = trimmedSubtype;
+    if (isU1) {
+      final trimmedId = id?.trim() ?? '';
+      if (trimmedId.isNotEmpty) {
+        json['id'] = trimmedId;
       }
+      final trimmedSubtype = subtype?.trim() ?? '';
+      json['subtype'] = trimmedSubtype.isEmpty ? 'Basic' : trimmedSubtype;
       json['alpha'] = normalizeAlphaHex(alpha);
       if (bedMinTemp != null) {
         json['bed_min_temp'] = bedMinTemp;
@@ -224,21 +314,17 @@ class OpenSpoolTagData {
       if (bedMaxTemp != null) {
         json['bed_max_temp'] = bedMaxTemp;
       }
-    }
+      json['weight'] = weight ?? 1000;
+      json['diameter'] = ((diameter ?? 1.75) * 100).round();
 
-    if (isU1 && tier == OpenSpoolTier.all) {
-      if (weight != null) {
-        json['weight'] = weight;
-      }
-      if (diameter != null) {
-        json['diameter'] = diameter;
-      }
-      final nonEmpty = additionalColorHexes
-          .where((value) => value.trim().isNotEmpty)
-          .map((value) => normalizeHexColor(value, withHash: false))
-          .toList();
-      if (nonEmpty.isNotEmpty) {
-        json['additional_color_hexes'] = nonEmpty;
+      if (tier == OpenSpoolTier.all) {
+        final nonEmpty = additionalColorHexes
+            .where((value) => value.trim().isNotEmpty)
+            .map((value) => normalizeHexColor(value, withHash: false))
+            .toList();
+        if (nonEmpty.isNotEmpty) {
+          json['additional_color_hexes'] = nonEmpty;
+        }
       }
     }
 
@@ -281,12 +367,13 @@ class OpenSpoolTagData {
       brand: _stringValue(json['brand']),
       subtype: _stringValue(json['subtype']),
       alpha: _stringValue(json['alpha']),
+      id: _stringValue(json['id']),
       minTemp: _intValue(json['min_temp']),
       maxTemp: _intValue(json['max_temp']),
       bedMinTemp: _intValue(json['bed_min_temp']),
       bedMaxTemp: _intValue(json['bed_max_temp']),
       weight: _intValue(json['weight']),
-      diameter: _doubleValue(json['diameter']),
+      diameter: _diameterValue(json['diameter']),
       additionalColorHexes: addColors,
       rawJson: jsonEncode(json),
     );
@@ -308,6 +395,7 @@ class OpenSpoolTagData {
       brand: brand,
       subtype: subtype,
       alpha: alpha,
+      id: id,
       minTemp: minTemp,
       maxTemp: maxTemp,
       bedMinTemp: bedMinTemp,
@@ -328,6 +416,7 @@ class OpenSpoolTagData {
       brand: brand,
       subtype: subtype,
       alpha: alpha,
+      id: id,
       minTemp: minTemp,
       maxTemp: maxTemp,
       bedMinTemp: bedMinTemp,
@@ -338,6 +427,27 @@ class OpenSpoolTagData {
       rawJson: rawJson,
       uid: uid,
       ntagType: value,
+    );
+  }
+
+  OpenSpoolTagData withId(String? value) {
+    return OpenSpoolTagData(
+      type: type,
+      colorHex: colorHex,
+      brand: brand,
+      subtype: subtype,
+      alpha: alpha,
+      id: value,
+      minTemp: minTemp,
+      maxTemp: maxTemp,
+      bedMinTemp: bedMinTemp,
+      bedMaxTemp: bedMaxTemp,
+      weight: weight,
+      diameter: diameter,
+      additionalColorHexes: additionalColorHexes,
+      rawJson: rawJson,
+      uid: uid,
+      ntagType: ntagType,
     );
   }
 
@@ -370,6 +480,14 @@ class OpenSpoolTagData {
       return double.tryParse(value.trim().replaceAll(',', '.'));
     }
     return null;
+  }
+
+  static double? _diameterValue(dynamic value) {
+    final diameter = _doubleValue(value);
+    if (diameter == null) {
+      return null;
+    }
+    return diameter >= 10 ? diameter / 100 : diameter;
   }
 }
 

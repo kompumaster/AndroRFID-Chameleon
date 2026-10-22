@@ -122,6 +122,7 @@ void main() {
     expect(communicator.pages[3], [0xE1, 0x10, 0x6D, 0x00]);
     expect(restored.ntagType, OpenSpoolNtagType.ntag216);
     expect(restored.subtype, List.filled(600, 'X').join());
+    expect(restored.id, isNotEmpty);
   });
 
   test('OpenSpoolTagService rejects NTAG213', () async {

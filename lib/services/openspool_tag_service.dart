@@ -155,8 +155,13 @@ class OpenSpoolTagService {
       }
 
       final layout = await _detectLayout();
+      final payload =
+          profile == OpenSpoolProfile.u1 &&
+              (data.id == null || data.id!.trim().isEmpty)
+          ? data.withId(newOpenSpoolTagId())
+          : data;
       final tlv = OpenSpoolNdefCodec.build(
-        data,
+        payload,
         profile: profile,
         tier: tier,
         maxLength: layout.userAreaSize,

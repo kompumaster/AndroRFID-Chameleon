@@ -41,7 +41,9 @@ class RecordRepository extends ChangeNotifier {
         ..addAll(
           decoded
               .whereType<Map>()
-              .map((item) => TagRecord.fromJson(Map<String, dynamic>.from(item)))
+              .map(
+                (item) => TagRecord.fromJson(Map<String, dynamic>.from(item)),
+              )
               .whereType<TagRecord>(),
         );
       _records.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -90,9 +92,14 @@ class RecordRepository extends ChangeNotifier {
   }) async {
     await ensureLoaded();
 
+    final normalizedData =
+        profile == OpenSpoolProfile.u1 &&
+            (data.id == null || data.id!.trim().isEmpty)
+        ? data.withId(newOpenSpoolTagId())
+        : data;
     final generated = name?.trim().isNotEmpty == true
         ? name!.trim()
-        : _openSpoolName(data);
+        : _openSpoolName(normalizedData);
     final uniqueName = _uniqueName(generated);
 
     final now = DateTime.now();
@@ -104,7 +111,7 @@ class RecordRepository extends ChangeNotifier {
       updatedAt: now,
       openspoolProfile: profile,
       openspoolTier: tier,
-      openspoolData: data,
+      openspoolData: normalizedData,
     );
 
     _records.insert(0, record);
@@ -113,7 +120,8 @@ class RecordRepository extends ChangeNotifier {
     return record;
   }
 
-  Future<void> rename(String id, String name) async {    await ensureLoaded();
+  Future<void> rename(String id, String name) async {
+    await ensureLoaded();
     final trimmed = name.trim();
     if (trimmed.isEmpty) {
       throw ArgumentError('Имя не может быть пустым');

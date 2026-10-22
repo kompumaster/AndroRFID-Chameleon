@@ -44,8 +44,13 @@ class OpenSpoolBinCodec {
       _writeHeader(dump, uid, layout);
     }
 
+    final payload =
+        profile == OpenSpoolProfile.u1 &&
+            (data.id == null || data.id!.trim().isEmpty)
+        ? data.withId(newOpenSpoolTagId())
+        : data;
     final tlv = OpenSpoolNdefCodec.build(
-      data,
+      payload,
       profile: profile,
       tier: tier,
       maxLength: layout.userAreaSize,

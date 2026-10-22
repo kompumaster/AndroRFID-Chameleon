@@ -401,9 +401,15 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
     setState(() => _busy = true);
     try {
+      final profile = _record.openspoolProfile ?? OpenSpoolProfile.standard;
+      final writeData =
+          profile == OpenSpoolProfile.u1 &&
+              (os.id == null || os.id!.trim().isEmpty)
+          ? os.withId(newOpenSpoolTagId())
+          : os;
       await OpenSpoolTagService(communicator).write(
-        os,
-        profile: _record.openspoolProfile ?? OpenSpoolProfile.standard,
+        writeData,
+        profile: profile,
         tier: _record.openspoolTier ?? OpenSpoolTier.standard,
       );
       if (mounted) {
@@ -429,9 +435,15 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
 
     setState(() => _busy = true);
     try {
+      final profile = _record.openspoolProfile ?? OpenSpoolProfile.standard;
+      final exportData =
+          profile == OpenSpoolProfile.u1 &&
+              (os.id == null || os.id!.trim().isEmpty)
+          ? os.withId(newOpenSpoolTagId())
+          : os;
       final bytes = OpenSpoolBinCodec.encode(
-        os,
-        profile: _record.openspoolProfile ?? OpenSpoolProfile.standard,
+        exportData,
+        profile: profile,
         tier: _record.openspoolTier ?? OpenSpoolTier.standard,
       );
       final safeName = _record.name.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');

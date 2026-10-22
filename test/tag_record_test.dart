@@ -63,6 +63,7 @@ void main() {
         type: 'PETG',
         subtype: 'Matte',
         colorHex: '#A5FF52',
+        id: 'u1-1',
         alpha: '80',
         minTemp: 220,
         maxTemp: 250,
@@ -85,6 +86,7 @@ void main() {
     expect(restored.openspoolData!.type, 'PETG');
     expect(restored.openspoolData!.subtype, 'Matte');
     expect(restored.openspoolData!.colorHex, '#A5FF52');
+    expect(restored.openspoolData!.id, 'u1-1');
     expect(restored.openspoolData!.weight, 750);
     expect(restored.openspoolData!.additionalColorHexes, ['#FFFFFF']);
     expect(restored.openspoolData!.ntagType, OpenSpoolNtagType.ntag216);

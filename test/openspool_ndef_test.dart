@@ -39,6 +39,61 @@ void main() {
     expect(u1['additional_color_hexes'], ['FFFFFF', '000000']);
   });
 
+  test('OpenSpool Basic always includes temperatures', () {
+    const data = OpenSpoolTagData(
+      type: 'PLA',
+      colorHex: '#FFFFFF',
+      minTemp: 190,
+      maxTemp: 220,
+    );
+
+    final json = data.toJson(tier: OpenSpoolTier.basic);
+    expect(json['min_temp'], 190);
+    expect(json['max_temp'], 220);
+  });
+
+  test('OpenSpool U1 writes id, weight, diameter and Basic subtype', () {
+    const data = OpenSpoolTagData(
+      type: 'PETG',
+      colorHex: '#FFFFFF',
+      id: '12345',
+      diameter: 1.75,
+    );
+
+    final json = data.toJson(
+      profile: OpenSpoolProfile.u1,
+      tier: OpenSpoolTier.standard,
+    );
+    expect(json['id'], '12345');
+    expect(json['subtype'], 'Basic');
+    expect(json['weight'], 1000);
+    expect(json['diameter'], 175);
+
+    final parsed = OpenSpoolTagData.fromJson(json);
+    expect(parsed.id, '12345');
+    expect(parsed.diameter, 1.75);
+  });
+
+  test('OpenSpool brands include U1-RFID vendors without duplicates', () {
+    final names = openSpoolManufacturers
+        .map((manufacturer) => manufacturer.name.toLowerCase())
+        .toList();
+
+    expect(names.toSet().length, names.length);
+    expect(
+      names,
+      containsAll([
+        'esun',
+        'overture',
+        'elegoo',
+        'anycubic',
+        'ziro',
+        'giantarm',
+        'snapmaker',
+      ]),
+    );
+  });
+
   test('OpenSpool standard NDEF roundtrip', () {
     const data = OpenSpoolTagData(
       brand: 'QIDI',

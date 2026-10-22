@@ -50,7 +50,9 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
   late final TextEditingController _alphaCtrl = TextEditingController(
     text: 'FF',
   );
-  late final TextEditingController _weightCtrl = TextEditingController();
+  late final TextEditingController _weightCtrl = TextEditingController(
+    text: '1000',
+  );
   late final TextEditingController _diameterCtrl = TextEditingController(
     text: '1.75',
   );
@@ -58,7 +60,8 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
 
   String _brand = 'Generic';
   String _material = 'PLA';
-  String _subtype = '';
+  String _subtype = 'Basic';
+  String? _u1Id;
   OpenSpoolTagData? _readData;
   OpenSpoolNtagType _ntagType = OpenSpoolNtagType.ntag215;
   bool _busy = false;
@@ -184,7 +187,8 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
     String? writeError,
   ) {
     final isU1 = profile == OpenSpoolProfile.u1;
-    final showExtended = isU1 && tier == OpenSpoolTier.all;
+    final showPhysicals = isU1;
+    final showAdditionalColors = isU1 && tier == OpenSpoolTier.all;
     final data = _buildData();
 
     return ListView(
@@ -306,30 +310,28 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
         ],
         const SizedBox(height: 12),
         _ColorField(controller: _colorCtrl, onTap: _pickColor),
-        if (tier != OpenSpoolTier.basic) ...[
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _Field(
-                  controller: _minCtrl,
-                  label: 'Сопло min, °C',
-                  keyboardType: TextInputType.number,
-                  onChanged: _rebuild,
-                ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _Field(
+                controller: _minCtrl,
+                label: 'Сопло min, °C',
+                keyboardType: TextInputType.number,
+                onChanged: _rebuild,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _Field(
-                  controller: _maxCtrl,
-                  label: 'Сопло max, °C',
-                  keyboardType: TextInputType.number,
-                  onChanged: _rebuild,
-                ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _Field(
+                controller: _maxCtrl,
+                label: 'Сопло max, °C',
+                keyboardType: TextInputType.number,
+                onChanged: _rebuild,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
         if (isU1) ...[
           const SizedBox(height: 12),
           _AlphaField(controller: _alphaCtrl, onTap: _pickAlpha),
@@ -356,7 +358,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
             ],
           ),
         ],
-        if (showExtended) ...[
+        if (showPhysicals) ...[
           const SizedBox(height: 12),
           Row(
             children: [
@@ -381,6 +383,8 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
               ),
             ],
           ),
+        ],
+        if (showAdditionalColors) ...[
           const SizedBox(height: 12),
           _Field(
             controller: _extraCtrl,
@@ -480,6 +484,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
           .map((value) => value.trim())
           .where((value) => value.isNotEmpty)
           .toList(),
+      id: _u1Id,
       ntagType: _ntagType,
     );
   }
@@ -504,6 +509,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
       setState(() {
         _readData = data;
         _ntagType = data.ntagType;
+        _u1Id = data.id;
       });
       _showMessage('OpenSpool-метка прочитана');
     } catch (e) {
@@ -534,14 +540,20 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
     });
 
     try {
+      final actualData =
+          profile == OpenSpoolProfile.u1 &&
+              (data.id == null || data.id!.trim().isEmpty)
+          ? data.withId(newOpenSpoolTagId())
+          : data;
       final actualType = await OpenSpoolTagService(communicator)
-          .write(data, profile: profile, tier: tier);
+          .write(actualData, profile: profile, tier: tier);
       if (!mounted) {
         return;
       }
       setState(() {
         _ntagType = actualType;
-        _readData = data.withNtagType(actualType);
+        _u1Id = actualData.id;
+        _readData = actualData.withNtagType(actualType);
       });
       _showMessage(
         'OpenSpool-метка записана и проверена (${actualType.label})',
@@ -582,6 +594,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
       if (!mounted) {
         return;
       }
+      setState(() => _u1Id = record.openspoolData?.id ?? _u1Id);
       _showMessage('Сохранено: ${record.name}');
     } catch (e) {
       if (mounted) {

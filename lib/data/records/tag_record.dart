@@ -42,18 +42,22 @@ class TagRecord {
     return 'Метка';
   }
 
-  TagRecord copyWith({String? name}) {
+  TagRecord copyWith({
+    String? name,
+    OpenSpoolTagData? openspoolData,
+    bool touch = true,
+  }) {
     return TagRecord(
       id: id,
       name: name ?? this.name,
       type: type,
       createdAt: createdAt,
-      updatedAt: DateTime.now(),
+      updatedAt: touch ? DateTime.now() : updatedAt,
       qidiModel: qidiModel,
       qidiData: qidiData,
       openspoolProfile: openspoolProfile,
       openspoolTier: openspoolTier,
-      openspoolData: openspoolData,
+      openspoolData: openspoolData ?? this.openspoolData,
     );
   }
 

@@ -399,22 +399,31 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
       return;
     }
 
+    final repository = context.read<RecordRepository>();
     setState(() => _busy = true);
     try {
       final profile = _record.openspoolProfile ?? OpenSpoolProfile.standard;
-      final writeData =
-          profile == OpenSpoolProfile.u1 &&
-              (os.id == null || os.id!.trim().isEmpty)
-          ? os.withId(newOpenSpoolTagId())
-          : os;
-      await OpenSpoolTagService(communicator).write(
-        writeData,
+      final result = await OpenSpoolTagService(communicator).write(
+        os,
         profile: profile,
         tier: _record.openspoolTier ?? OpenSpoolTier.standard,
       );
-      if (mounted) {
-        _message('OpenSpool-метка записана и проверена');
+      if (!mounted) {
+        return;
       }
+      if (result.data.id != os.id) {
+        await repository.updateOpenSpoolData(_record.id, result.data);
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _record = repository.records.firstWhere(
+            (record) => record.id == _record.id,
+            orElse: () => _record,
+          );
+        });
+      }
+      _message('OpenSpool-метка записана и проверена');
     } catch (e) {
       if (mounted) {
         _message(e.toString());
@@ -436,13 +445,8 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     setState(() => _busy = true);
     try {
       final profile = _record.openspoolProfile ?? OpenSpoolProfile.standard;
-      final exportData =
-          profile == OpenSpoolProfile.u1 &&
-              (os.id == null || os.id!.trim().isEmpty)
-          ? os.withId(newOpenSpoolTagId())
-          : os;
       final bytes = OpenSpoolBinCodec.encode(
-        exportData,
+        os,
         profile: profile,
         tier: _record.openspoolTier ?? OpenSpoolTier.standard,
       );

@@ -57,6 +57,7 @@ class AppTranslations {
     'NTAG не вернул страницу ': 'NTAG did not return page ',
     'NTAG не подтвердил запись страницы ':
         'NTAG did not confirm write of page ',
+    'NTAG вернул ': 'NTAG returned ',
     'Chameleon не подтвердил запись блока ':
         'Chameleon did not confirm write of block ',
     'Не удалось прочитать QIDI-метку. Проверьте, что это MIFARE Classic 1K и метка лежит на Chameleon. Ошибка: ': 'Could not read QIDI tag. Make sure it is MIFARE Classic 1K and on Chameleon. Error: ',
@@ -80,6 +81,7 @@ class AppTranslations {
     'RFID Chameleon': 'RFID Chameleon',
     'RFID Chameleon · 1.0.0': 'RFID Chameleon · 1.0.0',
     'RFID Chameleon · 1.1.0': 'RFID Chameleon · 1.1.0',
+    'RFID Chameleon · 1.1.1': 'RFID Chameleon · 1.1.1',
     'Подключение': 'Connection',
     'Подключение Chameleon': 'Chameleon connection',
     'Подключение к Chameleon': 'Connecting to Chameleon',
@@ -159,6 +161,7 @@ class AppTranslations {
     'Записать метку': 'Write tag',
     'Записываю…': 'Writing…',
     'Сохранить в данные': 'Save to data',
+    'Новая метка': 'New tag',
     'Прочитано': 'Read result',
     'Блок 4': 'Block 4',
     'Неизвестно': 'Unknown',

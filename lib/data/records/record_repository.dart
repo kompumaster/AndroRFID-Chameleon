@@ -47,6 +47,24 @@ class RecordRepository extends ChangeNotifier {
               .whereType<TagRecord>(),
         );
       _records.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      var migrated = false;
+      for (var i = 0; i < _records.length; i++) {
+        final record = _records[i];
+        final data = record.openspoolData;
+        if (record.type == TagRecordType.openspool &&
+            record.openspoolProfile == OpenSpoolProfile.u1 &&
+            data != null &&
+            (data.id == null || data.id!.trim().isEmpty)) {
+          _records[i] = record.copyWith(
+            openspoolData: data.withId(newOpenSpoolTagId()),
+            touch: false,
+          );
+          migrated = true;
+        }
+      }
+      if (migrated) {
+        await _persist();
+      }
     } catch (e) {
       debugPrint('Could not load records: $e');
     } finally {
@@ -118,6 +136,17 @@ class RecordRepository extends ChangeNotifier {
     await _persist();
     notifyListeners();
     return record;
+  }
+
+  Future<void> updateOpenSpoolData(String id, OpenSpoolTagData data) async {
+    await ensureLoaded();
+    final index = _records.indexWhere((record) => record.id == id);
+    if (index < 0) {
+      return;
+    }
+    _records[index] = _records[index].copyWith(openspoolData: data);
+    await _persist();
+    notifyListeners();
   }
 
   Future<void> rename(String id, String name) async {

@@ -15,6 +15,13 @@ class OpenSpoolTagException implements Exception {
   String toString() => message;
 }
 
+class OpenSpoolWriteResult {
+  const OpenSpoolWriteResult({required this.data, required this.ntagType});
+
+  final OpenSpoolTagData data;
+  final OpenSpoolNtagType ntagType;
+}
+
 class OpenSpoolTagService {
   OpenSpoolTagService(this.communicator);
 
@@ -80,6 +87,12 @@ class OpenSpoolTagService {
       );
       final take = math.min(16, (layout.lastUserPage - page + 1) * 4);
       final offset = (page - OpenSpoolNtagLayout.firstUserPage) * 4;
+      if (chunk.length < take) {
+        throw OpenSpoolTagException(
+          'NTAG вернул ${chunk.length} байт вместо $take '
+          'для страницы $page.',
+        );
+      }
       user.setRange(offset, offset + take, chunk);
     }
     return user;
@@ -140,7 +153,7 @@ class OpenSpoolTagService {
     }
   }
 
-  Future<OpenSpoolNtagType> write(
+  Future<OpenSpoolWriteResult> write(
     OpenSpoolTagData data, {
     OpenSpoolProfile profile = OpenSpoolProfile.standard,
     OpenSpoolTier tier = OpenSpoolTier.standard,
@@ -202,7 +215,7 @@ class OpenSpoolTagService {
           'Проверка после записи OpenSpool не совпала.',
         );
       }
-      return layout.type;
+      return OpenSpoolWriteResult(data: payload, ntagType: layout.type);
     } on OpenSpoolTagException {
       rethrow;
     } catch (e) {

@@ -230,6 +230,7 @@ class ConnectionService extends ChangeNotifier {
 
   Future<void> _autoScanLoop(int token) async {
     await ensureLoaded();
+    var autoConnectAttempts = 0;
     try {
       while (_autoScanActive &&
           token == _autoScanToken &&
@@ -263,13 +264,22 @@ class ConnectionService extends ChangeNotifier {
               }
             }
             if (match != null) {
-              final connected = await connect(match);
+              autoConnectAttempts++;
+              final connected = await connect(match, keepAutoScan: true);
               if (connected) {
+                stopAutoScan();
                 return;
               }
               if (!_autoScanActive || token != _autoScanToken) {
                 break;
               }
+              if (autoConnectAttempts >= 3) {
+                _autoScanActive = false;
+                notifyListeners();
+                break;
+              }
+              await Future<void>.delayed(const Duration(seconds: 3));
+              continue;
             }
           }
           _autoScanActive = false;
@@ -288,7 +298,7 @@ class ConnectionService extends ChangeNotifier {
     }
   }
 
-  Future<bool> connect(Chameleon device) async {
+  Future<bool> connect(Chameleon device, {bool keepAutoScan = false}) async {
     if (_status == BleStatus.connecting) {
       return false;
     }
@@ -297,7 +307,9 @@ class ConnectionService extends ChangeNotifier {
     if (_disposed) {
       return false;
     }
-    stopAutoScan();
+    if (!keepAutoScan) {
+      stopAutoScan();
+    }
     _error = null;
     _current = device;
     _status = BleStatus.connecting;

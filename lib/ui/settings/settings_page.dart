@@ -166,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
         const SizedBox(height: 24),
         const Divider(),
         const SizedBox(height: 8),
-        const LText('RFID Chameleon · 1.1.0'),
+        const LText('RFID Chameleon · 1.1.1'),
       ],
     );
   }

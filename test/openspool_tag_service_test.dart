@@ -26,6 +26,7 @@ class _FakeNtagCommunicator extends ChameleonCommunicator {
   final OpenSpoolNtagType ntagType;
   final List<Uint8List> pages;
   bool present = true;
+  bool shortUserReads = false;
 
   @override
   Future<bool> isReaderDeviceMode() async => true;
@@ -63,6 +64,9 @@ class _FakeNtagCommunicator extends ChameleonCommunicator {
       final out = <int>[];
       for (var i = 0; i < 4; i++) {
         out.addAll(pages[page + i]);
+      }
+      if (shortUserReads && page >= 4) {
+        return Uint8List.fromList(out.sublist(0, 4));
       }
       return Uint8List.fromList(out);
     }
@@ -115,10 +119,10 @@ void main() {
       diameter: 1.75,
     );
 
-    final actualType = await service.write(data, profile: OpenSpoolProfile.u1);
+    final result = await service.write(data, profile: OpenSpoolProfile.u1);
     final restored = await service.read();
 
-    expect(actualType, OpenSpoolNtagType.ntag216);
+    expect(result.ntagType, OpenSpoolNtagType.ntag216);
     expect(communicator.pages[3], [0xE1, 0x10, 0x6D, 0x00]);
     expect(restored.ntagType, OpenSpoolNtagType.ntag216);
     expect(restored.subtype, List.filled(600, 'X').join());
@@ -137,6 +141,22 @@ void main() {
           (error) => error.message,
           'message',
           contains('NTAG213'),
+        ),
+      ),
+    );
+  });
+
+  test('OpenSpoolTagService rejects a short page block', () async {
+    final communicator = _FakeNtagCommunicator()..shortUserReads = true;
+    final service = OpenSpoolTagService(communicator);
+
+    expect(
+      () => service.read(),
+      throwsA(
+        isA<OpenSpoolTagException>().having(
+          (error) => error.message,
+          'message',
+          contains('вместо'),
         ),
       ),
     );

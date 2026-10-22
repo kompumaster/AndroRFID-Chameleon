@@ -360,6 +360,11 @@ class OpenSpoolTagData {
         }
       }
     }
+    final u1Fields =
+        json['id'] != null ||
+        json['alpha'] != null ||
+        json['bed_min_temp'] != null ||
+        json['bed_max_temp'] != null;
 
     return OpenSpoolTagData(
       type: type.trim(),
@@ -373,7 +378,7 @@ class OpenSpoolTagData {
       bedMinTemp: _intValue(json['bed_min_temp']),
       bedMaxTemp: _intValue(json['bed_max_temp']),
       weight: _intValue(json['weight']),
-      diameter: _diameterValue(json['diameter']),
+      diameter: _diameterValue(json['diameter'], hundredths: u1Fields),
       additionalColorHexes: addColors,
       rawJson: jsonEncode(json),
     );
@@ -482,12 +487,12 @@ class OpenSpoolTagData {
     return null;
   }
 
-  static double? _diameterValue(dynamic value) {
+  static double? _diameterValue(dynamic value, {required bool hundredths}) {
     final diameter = _doubleValue(value);
     if (diameter == null) {
       return null;
     }
-    return diameter >= 10 ? diameter / 100 : diameter;
+    return hundredths ? diameter / 100 : diameter;
   }
 }
 

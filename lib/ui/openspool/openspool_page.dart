@@ -210,6 +210,15 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
                 'Сохранение и отправка на U1 работают.',
           ),
         ],
+        if (isU1)
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: _busy ? null : _resetU1Form,
+              icon: const Icon(Icons.add_circle_outline),
+              label: const LText('Новая метка'),
+            ),
+          ),
         const SizedBox(height: 12),
         DropdownButtonFormField<OpenSpoolTier>(
           key: ValueKey('os-tier-${profile.name}-${tier.name}'),
@@ -466,6 +475,28 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
     });
   }
 
+  void _resetU1Form() {
+    setState(() {
+      _brand = 'Generic';
+      _material = 'PLA';
+      _subtype = 'Basic';
+      _colorCtrl.text = '#FFFFFF';
+      _minCtrl.text = '190';
+      _maxCtrl.text = '220';
+      _bedMinCtrl.text = '50';
+      _bedMaxCtrl.text = '60';
+      _alphaCtrl.text = 'FF';
+      _weightCtrl.text = '1000';
+      _diameterCtrl.text = '1.75';
+      _extraCtrl.text = '';
+      _u1Id = null;
+      _ntagType = OpenSpoolNtagType.ntag215;
+      _readData = null;
+      _readError = null;
+      _writeError = null;
+    });
+  }
+
   OpenSpoolTagData _buildData() {
     return OpenSpoolTagData(
       brand: _brand,
@@ -540,23 +571,18 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
     });
 
     try {
-      final actualData =
-          profile == OpenSpoolProfile.u1 &&
-              (data.id == null || data.id!.trim().isEmpty)
-          ? data.withId(newOpenSpoolTagId())
-          : data;
-      final actualType = await OpenSpoolTagService(communicator)
-          .write(actualData, profile: profile, tier: tier);
+      final result = await OpenSpoolTagService(communicator)
+          .write(data, profile: profile, tier: tier);
       if (!mounted) {
         return;
       }
       setState(() {
-        _ntagType = actualType;
-        _u1Id = actualData.id;
-        _readData = actualData.withNtagType(actualType);
+        _ntagType = result.ntagType;
+        _u1Id = result.data.id;
+        _readData = result.data;
       });
       _showMessage(
-        'OpenSpool-метка записана и проверена (${actualType.label})',
+        'OpenSpool-метка записана и проверена (${result.ntagType.label})',
       );
     } catch (e) {
       if (mounted) {

@@ -74,6 +74,27 @@ void main() {
     expect(parsed.diameter, 1.75);
   });
 
+  test('OpenSpool diameter units are profile-aware', () {
+    final standard = OpenSpoolTagData.fromJson({
+      'protocol': 'openspool',
+      'version': '1.0',
+      'type': 'PLA',
+      'color_hex': 'FFFFFF',
+      'diameter': 1.75,
+    });
+    expect(standard.diameter, 1.75);
+
+    final u1 = OpenSpoolTagData.fromJson({
+      'protocol': 'openspool',
+      'version': '1.0',
+      'type': 'PLA',
+      'color_hex': 'FFFFFF',
+      'id': '1',
+      'diameter': 175,
+    });
+    expect(u1.diameter, 1.75);
+  });
+
   test('OpenSpool brands include U1-RFID vendors without duplicates', () {
     final names = openSpoolManufacturers
         .map((manufacturer) => manufacturer.name.toLowerCase())

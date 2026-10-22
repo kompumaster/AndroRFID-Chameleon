@@ -79,7 +79,7 @@ Android-приложение для чтения и записи RFID-меток
 
 ## Настройки
 
-- **Язык / Language** — русский или английский. При первом запуске для ряда стран СНГ и Балтии выбирается русский, для остальных — английский.
+- **Язык / Language** — русский или английский.
 - **Автоматическое сканирование** — повторять поиск Chameleon при запуске и после потери связи.
 - **Автоматически подключаться к последнему** — подключаться к ранее использованному устройству, если оно найдено.
 - **QIDI CFG** — импорт `.cfg` и сброс к встроенным спискам.
@@ -134,17 +134,6 @@ flutter build apk --release
 
 Готовый файл: `build/app/outputs/flutter-apk/app-release.apk`.
 В корне проекта он сохраняется как `RFID_Chameleon.apk`.
-
-Если release-сборка на Windows падает из-за кириллицы в пути, можно использовать временный диск:
-
-```powershell
-subst R: "D:\путь\к\AndroRFID-Chameleon"
-Set-Location R:\
-flutter build apk --release
-Copy-Item build\app\outputs\flutter-apk\app-release.apk RFID_Chameleon.apk -Force
-Set-Location D:\
-subst R: /D
-```
 
 ### Подпись release APK
 

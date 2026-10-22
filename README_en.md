@@ -79,7 +79,7 @@ The app imports a text configuration file with `[filaN]` sections and fields suc
 
 ## Settings
 
-- **Language / Язык** — Russian or English. On first launch, Russian is selected for a number of CIS and Baltic countries, English otherwise.
+- **Language / Язык** — Russian or English.
 - **Automatic scanning** — repeat the Chameleon search at startup and after connection loss.
 - **Automatically connect to the last device** — connect to a previously used device if it is found.
 - **QIDI CFG** — import `.cfg` and reset to the built-in lists.

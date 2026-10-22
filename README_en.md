@@ -134,6 +134,8 @@ The project is built with standard Flutter tooling. The release APK is signed wi
 
 - [ChameleonUltraGUI](https://github.com/GameTec-live/ChameleonUltraGUI) — an open-source project for working with Chameleon Ultra, used as a reference for the BLE protocol and device commands.
 - [BoxRFID-Touch](https://github.com/TinkerBarn/BoxRFID-Touch) — the source of QIDI/OpenSpool logic and formats; lists and behavior were checked against v4.2.1.
+- [OpenSpool](https://github.com/spuder/openspool) — documentation and specification for the OpenSpool NDEF JSON tag format.
+- [U1-RFID](https://github.com/DnG-Crafts/U1-RFID) — documentation for the Snapmaker U1 OpenSpool format and the official U1 tag protocol.
 
 Thanks to the authors and contributors of these projects for their open materials.
 

@@ -134,6 +134,8 @@ lib/
 
 - [ChameleonUltraGUI](https://github.com/GameTec-live/ChameleonUltraGUI) — открытый проект для работы с Chameleon Ultra, использованный как ориентир по BLE-протоколу и командам устройства.
 - [BoxRFID-Touch](https://github.com/TinkerBarn/BoxRFID-Touch) — источник логики и форматов QIDI/OpenSpool; списки и поведение сверены с версией v4.2.1.
+- [OpenSpool](https://github.com/spuder/openspool) — документация и спецификация NDEF JSON-формата меток OpenSpool.
+- [U1-RFID](https://github.com/DnG-Crafts/U1-RFID) — документация по формату OpenSpool для Snapmaker U1 и протоколу официальных U1-меток.
 
 Спасибо авторам и участникам этих проектов за открытые материалы.
 

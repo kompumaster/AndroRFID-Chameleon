@@ -2,6 +2,10 @@
 
 **[Русская версия](README.md)**
 
+<p align="center">
+  <img src="logo/gen01.png" alt="RFID Chameleon" width="220">
+</p>
+
 Android app for reading and writing filament RFID tags via **[Chameleon Ultra](https://github.com/RfidResearchGroup/ChameleonULtra)** over Bluetooth LE. It brings the core BoxRFID-Touch workflows to a phone: QIDI, OpenSpool, Snapmaker U1, saved tags, and `.bin` import/export.
 
 The app works **over BLE only** — no USB connection is used. It does not manage Chameleon itself (slots, emulation, DFU, or firmware); the device acts as an RFID reader/writer.

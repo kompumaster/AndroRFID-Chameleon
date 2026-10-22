@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../app_state.dart';
 import '../../core/ble/connection_service.dart';
@@ -166,9 +167,35 @@ class _SettingsPageState extends State<SettingsPage> {
         const SizedBox(height: 24),
         const Divider(),
         const SizedBox(height: 8),
-        const LText('RFID Chameleon · 1.1.1'),
+        const LText('RFID Chameleon · 1.1.2'),
+        const SizedBox(height: 4),
+        TextButton.icon(
+          onPressed: _openRepository,
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            alignment: Alignment.centerLeft,
+          ),
+          icon: const Icon(Icons.open_in_new, size: 16),
+          label: const LText(
+            'https://github.com/kompumaster/AndroRFID-Chameleon',
+          ),
+        ),
       ],
     );
+  }
+
+  Future<void> _openRepository() async {
+    final uri = Uri.parse('https://github.com/kompumaster/AndroRFID-Chameleon');
+    try {
+      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!opened && mounted) {
+        _message('Не удалось открыть ссылку');
+      }
+    } catch (e) {
+      if (mounted) {
+        _message('Не удалось открыть ссылку: $e');
+      }
+    }
   }
 
   Future<void> _importCfg() async {

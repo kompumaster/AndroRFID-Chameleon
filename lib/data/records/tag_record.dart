@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import '../../core/chameleon/helpers/utils.dart';
 import '../openspool/openspool_data.dart';
+import '../openspool/openspool_ntag.dart';
 import '../qidi/qidi_data.dart';
 
 enum TagRecordType { qidi, openspool }
@@ -77,6 +78,7 @@ class TagRecord {
         'openspool': {
           'profile': (openspoolProfile ?? OpenSpoolProfile.standard).name,
           'tier': (openspoolTier ?? OpenSpoolTier.all).name,
+          'ntagType': openspoolData!.ntagType.name,
           'json': openspoolData!.toJson(
             profile: openspoolProfile ?? OpenSpoolProfile.standard,
             tier: openspoolTier ?? OpenSpoolTier.all,
@@ -159,12 +161,21 @@ class TagRecord {
             .where((value) => value.name == tierName)
             .firstOrNull;
       }
+      var ntagType = OpenSpoolNtagType.ntag215;
+      final ntagTypeName = openspool['ntagType'];
+      if (ntagTypeName is String) {
+        ntagType =
+            OpenSpoolNtagType.values
+                .where((value) => value.name == ntagTypeName)
+                .firstOrNull ??
+            ntagType;
+      }
       final dataJson = openspool['json'];
       if (dataJson is Map) {
         try {
           openspoolData = OpenSpoolTagData.fromJson(
             Map<String, dynamic>.from(dataJson),
-          );
+          ).withNtagType(ntagType);
         } on OpenSpoolFormatException {
           openspoolData = null;
         }

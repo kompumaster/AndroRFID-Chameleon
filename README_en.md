@@ -14,7 +14,7 @@ The app works **over BLE only** — no USB connection is used. It does not manag
   - Built-in material lists, 24 colors, manufacturers.
   - Import a QIDI CFG file to use a custom material list.
 - **OpenSpool**
-  - Read/write NTAG215 in NDEF JSON format.
+  - Read/write NTAG215/216 in NDEF JSON format.
   - **OpenSpool Standard** and **Snapmaker U1** profiles.
   - Basic / Standard / All (U1) data versions, material presets, and color picker.
   - Additional U1 fields: subtype, alpha, bed temperatures, weight, diameter, additional colors.
@@ -38,7 +38,7 @@ The app works **over BLE only** — no USB connection is used. It does not manag
 - Chameleon Ultra connected over BLE. Lite detection exists in the code, but the primary tested setup is Ultra.
 - Tags:
   - **MIFARE Classic 1K** for QIDI;
-  - **NTAG215** for OpenSpool and Snapmaker U1.
+  - **NTAG215 or NTAG216** for OpenSpool and Snapmaker U1; NTAG213 is not supported.
 - For sending to U1: a Snapmaker U1 on the same network, HTTP port `7125` by default.
 - Android permissions: Bluetooth / “Nearby devices”; older Android versions also need location.
 
@@ -49,7 +49,7 @@ The app works **over BLE only** — no USB connection is used. It does not manag
 3. Place the tag on Chameleon and tap **“Read tag”**, or fill in the data and tap **“Write tag”**. A write is verified by reading the tag back.
 4. To save the data, tap **“Save to data”**. Otherwise the tag is not added to the list.
 5. The **Data** tab contains saved tags. From there you can write a tag again, rename or delete a record, and export `.bin`.
-6. To import `.bin`, tap **“Import .bin”** in the Data tab. Only QIDI (1024 bytes) and OpenSpool (540 bytes) files are supported.
+6. To import `.bin`, tap **“Import .bin”** in the Data tab. QIDI (1024 bytes), NTAG215 (540 bytes), and NTAG216 (924 bytes) files are supported.
 7. For U1, open **Settings → Snapmaker U1**, enter host/port, save, and tap **“Check”**. Sending is available from the U1 form and from a saved U1 record.
 
 Without Chameleon, saving, record management, `.bin` import/export, and sending to U1 remain available. Tag read/write buttons are disabled.
@@ -66,12 +66,13 @@ Without Chameleon, saving, record management, `.bin` import/export, and sending 
 
 ### OpenSpool
 
-- Tag: NTAG215, 135 pages.
-- CC: `E1 10 3E 00`.
+- Tags: NTAG215 (135 pages, 504 bytes) or NTAG216 (231 pages, 888 bytes).
+- CC: `E1 10 3E 00` for NTAG215, `E1 10 6D 00` for NTAG216.
 - NDEF record with MIME `application/json`.
 - The JSON contains `protocol: "openspool"`, `version: "1.0"`, material type, and color; U1 adds extended fields.
-- User data: pages 4–129.
-- `.bin` dump: 540 bytes (135 × 4).
+- User data: pages 4–129 (NTAG215) or 4–225 (NTAG216).
+- `.bin` dump: 540 bytes (NTAG215) or 924 bytes (NTAG216).
+- NTAG213 is not supported.
 
 ### QIDI CFG
 
@@ -124,7 +125,7 @@ The project is built with standard Flutter tooling. The release APK is signed wi
 ## Status and limitations
 
 - QIDI read/write has been verified on a real Chameleon and a MIFARE Classic 1K tag.
-- OpenSpool on NTAG215 and the Snapmaker U1 integration have not yet been tested on real hardware.
+- OpenSpool on NTAG215/216 and the Snapmaker U1 integration have not yet been tested on real hardware.
 - Android only; there is no iOS version.
 - No USB OTG, slot management, emulation, DFU/firmware updates, logs, or calibration.
 - Snapmaker U1 uses HTTP without authentication; the phone and printer must be on the same network.

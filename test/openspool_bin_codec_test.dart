@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:androrfid_chameleon/data/openspool/openspool_bin_codec.dart';
 import 'package:androrfid_chameleon/data/openspool/openspool_data.dart';
+import 'package:androrfid_chameleon/data/openspool/openspool_ntag.dart';
 
 void main() {
   test('OpenSpool bin has 540 bytes, NTAG215 CC and header', () {
@@ -30,6 +31,25 @@ void main() {
     expect(restored.uid, hasLength(7));
   });
 
+  test('OpenSpool bin supports NTAG216', () {
+    const data = OpenSpoolTagData(
+      type: 'PETG',
+      colorHex: '#123456',
+      ntagType: OpenSpoolNtagType.ntag216,
+    );
+
+    final dump = OpenSpoolBinCodec.encode(data);
+
+    expect(dump, hasLength(924));
+    expect(dump.sublist(12, 16), [0xE1, 0x10, 0x6D, 0x00]);
+    expect(dump[16], 0x03);
+
+    final restored = OpenSpoolBinCodec.decode(dump);
+    expect(restored.type, 'PETG');
+    expect(restored.ntagType, OpenSpoolNtagType.ntag216);
+    expect(restored.uid, hasLength(7));
+  });
+
   test('OpenSpool bin export reuses an existing dump header', () {
     final original = OpenSpoolBinCodec.encode(
       const OpenSpoolTagData(type: 'PLA', colorHex: '#FFFFFF'),
@@ -44,11 +64,13 @@ void main() {
     expect(parsed.type, 'PETG');
   });
 
-  test('OpenSpool bin rejects non-NTAG215 dump', () {
-    final dump = Uint8List(540);
-
+  test('OpenSpool bin rejects a dump with a foreign size or CC', () {
     expect(
-      () => OpenSpoolBinCodec.decode(dump),
+      () => OpenSpoolBinCodec.decode(Uint8List(540)),
+      throwsA(isA<OpenSpoolBinException>()),
+    );
+    expect(
+      () => OpenSpoolBinCodec.decode(Uint8List(500)),
       throwsA(isA<OpenSpoolBinException>()),
     );
   });

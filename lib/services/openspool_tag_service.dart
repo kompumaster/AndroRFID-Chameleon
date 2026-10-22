@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import '../../core/chameleon/bridge/chameleon.dart';
 import '../data/openspool/openspool_data.dart';
 import '../data/openspool/openspool_ndef_codec.dart';
+import '../data/openspool/openspool_ntag.dart';
 
 class OpenSpoolTagException implements Exception {
   OpenSpoolTagException(this.message);
@@ -16,13 +17,6 @@ class OpenSpoolTagException implements Exception {
 
 class OpenSpoolTagService {
   OpenSpoolTagService(this.communicator);
-
-  static const int ccPage = 3;
-  static const int firstUserPage = 4;
-  static const int lastUserPage = 129;
-  static const int userAreaPages = lastUserPage - firstUserPage + 1;
-  static const int userAreaSize = userAreaPages * 4;
-  static const List<int> cc = [0xE1, 0x10, 0x3E, 0x00];
 
   final ChameleonCommunicator communicator;
 
@@ -39,9 +33,7 @@ class OpenSpoolTagService {
       autoSelect: autoSelect,
     );
     if (response.length < 4) {
-      throw OpenSpoolTagException(
-        'NTAG не вернул страницу $page.',
-      );
+      throw OpenSpoolTagException('NTAG не вернул страницу $page.');
     }
     return response;
   }
@@ -54,34 +46,43 @@ class OpenSpoolTagService {
     return header.sublist(0, 16);
   }
 
-  Future<Uint8List> _readUserArea() async {
-    final user = Uint8List(userAreaSize);
-    for (var page = firstUserPage; page <= lastUserPage; page += 4) {
+  Future<OpenSpoolNtagLayout> _detectLayout() async {
+    final response = await _readPageBlock(
+      OpenSpoolNtagLayout.ccPage,
+      autoSelect: true,
+    );
+    final cc = response.sublist(0, 4);
+    final layout = OpenSpoolNtagLayout.fromCc(cc);
+    if (layout != null) {
+      return layout;
+    }
+    if (OpenSpoolNtagLayout.isNtag213(cc)) {
+      throw OpenSpoolTagException(
+        'NTAG213 не поддерживается. Используйте NTAG215 или NTAG216.',
+      );
+    }
+    throw OpenSpoolTagException(
+      'Не удалось определить тип метки. '
+      'Ожидается NTAG215/216, CC: ${_hex(cc)}.',
+    );
+  }
+
+  Future<Uint8List> _readUserArea(OpenSpoolNtagLayout layout) async {
+    final user = Uint8List(layout.userAreaSize);
+    for (
+      var page = OpenSpoolNtagLayout.firstUserPage;
+      page <= layout.lastUserPage;
+      page += 4
+    ) {
       final chunk = await _readPageBlock(
         page,
-        autoSelect: page == firstUserPage,
+        autoSelect: page == OpenSpoolNtagLayout.firstUserPage,
       );
-      final take = math.min(16, (lastUserPage - page + 1) * 4);
-      final offset = (page - firstUserPage) * 4;
+      final take = math.min(16, (layout.lastUserPage - page + 1) * 4);
+      final offset = (page - OpenSpoolNtagLayout.firstUserPage) * 4;
       user.setRange(offset, offset + take, chunk);
     }
     return user;
-  }
-
-  Future<void> _ensureCc() async {
-    final header = await _readHeader();
-    final current = header.sublist(12, 16);
-    if (_matches(current, cc)) {
-      return;
-    }
-
-    await _writePage(ccPage, Uint8List.fromList(cc), autoSelect: true);
-    final verify = await _readHeader();
-    if (!_matches(verify.sublist(12, 16), cc)) {
-      throw OpenSpoolTagException(
-        'Не удалось установить NTAG215 CC E1 10 3E 00.',
-      );
-    }
   }
 
   Future<void> _writePage(
@@ -108,9 +109,7 @@ class OpenSpoolTagService {
       ok = await attempt(true);
     }
     if (!ok) {
-      throw OpenSpoolTagException(
-        'NTAG не подтвердил запись страницы $page.',
-      );
+      throw OpenSpoolTagException('NTAG не подтвердил запись страницы $page.');
     }
   }
 
@@ -120,40 +119,28 @@ class OpenSpoolTagService {
       final card = await communicator.scan14443aTag();
       if (card == null) {
         throw OpenSpoolTagException(
-          'Метка не найдена. Приложите NTAG215 к Chameleon.',
+          'Метка не найдена. Приложите NTAG215/216 к Chameleon.',
         );
       }
 
+      final layout = await _detectLayout();
       final header = await _readHeader();
-      final userArea = await _readUserArea();
+      final userArea = await _readUserArea(layout);
       final data = OpenSpoolNdefCodec.parse(userArea);
-      return OpenSpoolTagData(
-        type: data.type,
-        colorHex: data.colorHex,
-        brand: data.brand,
-        subtype: data.subtype,
-        alpha: data.alpha,
-        minTemp: data.minTemp,
-        maxTemp: data.maxTemp,
-        bedMinTemp: data.bedMinTemp,
-        bedMaxTemp: data.bedMaxTemp,
-        weight: data.weight,
-        diameter: data.diameter,
-        additionalColorHexes: data.additionalColorHexes,
-        rawJson: data.rawJson,
-        uid: Uint8List.fromList(header.sublist(0, 7)),
-      );
+      return data
+          .withNtagType(layout.type)
+          .withUid(Uint8List.fromList(header.sublist(0, 7)));
     } on OpenSpoolTagException {
       rethrow;
     } catch (e) {
       throw OpenSpoolTagException(
-        'Не удалось прочитать OpenSpool-метку. Проверьте, что это NTAG215. '
+        'Не удалось прочитать OpenSpool-метку. Проверьте, что это NTAG215/216. '
         'Ошибка: $e',
       );
     }
   }
 
-  Future<void> write(
+  Future<OpenSpoolNtagType> write(
     OpenSpoolTagData data, {
     OpenSpoolProfile profile = OpenSpoolProfile.standard,
     OpenSpoolTier tier = OpenSpoolTier.standard,
@@ -163,16 +150,16 @@ class OpenSpoolTagService {
       final card = await communicator.scan14443aTag();
       if (card == null) {
         throw OpenSpoolTagException(
-          'Метка не найдена. Приложите NTAG215 к Chameleon.',
+          'Метка не найдена. Приложите NTAG215/216 к Chameleon.',
         );
       }
 
-      await _ensureCc();
+      final layout = await _detectLayout();
       final tlv = OpenSpoolNdefCodec.build(
         data,
         profile: profile,
         tier: tier,
-        maxLength: userAreaSize,
+        maxLength: layout.userAreaSize,
       );
 
       final pageCount = (tlv.length + 3) ~/ 4;
@@ -184,13 +171,13 @@ class OpenSpoolTagService {
           page[i] = source < tlv.length ? tlv[source] : 0;
         }
         await _writePage(
-          firstUserPage + index,
+          OpenSpoolNtagLayout.firstUserPage + index,
           page,
           autoSelect: index == 0,
         );
       }
 
-      final readBack = await _readUserArea();
+      final readBack = await _readUserArea(layout);
       final tlvReadBack = OpenSpoolNdefCodec.findTlv(readBack);
       final expectedTlv = OpenSpoolNdefCodec.findTlv(tlv);
       if (tlvReadBack == null ||
@@ -210,6 +197,7 @@ class OpenSpoolTagService {
           'Проверка после записи OpenSpool не совпала.',
         );
       }
+      return layout.type;
     } on OpenSpoolTagException {
       rethrow;
     } catch (e) {
@@ -217,6 +205,12 @@ class OpenSpoolTagService {
         'Не удалось записать OpenSpool-метку. Ошибка: $e',
       );
     }
+  }
+
+  static String _hex(List<int> bytes) {
+    return bytes
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0').toUpperCase())
+        .join(' ');
   }
 
   bool _matches(List<int> a, List<int> b) {

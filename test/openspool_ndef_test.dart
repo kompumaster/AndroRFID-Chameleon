@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:androrfid_chameleon/data/openspool/openspool_data.dart';
 import 'package:androrfid_chameleon/data/openspool/openspool_ndef_codec.dart';
+import 'package:androrfid_chameleon/data/openspool/openspool_ntag.dart';
 
 void main() {
   test('OpenSpool default subtypes match BoxRFID-Touch', () {
@@ -151,6 +152,34 @@ void main() {
       () => OpenSpoolNdefCodec.parse(area),
       throwsA(isA<OpenSpoolFormatException>()),
     );
+  });
+
+  test('OpenSpool payload can fit NTAG216 but not NTAG215', () {
+    final data = OpenSpoolTagData(
+      type: 'PLA',
+      colorHex: '#FFFFFF',
+      subtype: List.filled(600, 'X').join(),
+    );
+
+    expect(
+      () => OpenSpoolNdefCodec.build(
+        data,
+        profile: OpenSpoolProfile.u1,
+        maxLength: OpenSpoolNtagLayout.ntag215.userAreaSize,
+      ),
+      throwsA(isA<OpenSpoolFormatException>()),
+    );
+
+    final tlv = OpenSpoolNdefCodec.build(
+      data,
+      profile: OpenSpoolProfile.u1,
+      maxLength: OpenSpoolNtagLayout.ntag216.userAreaSize,
+    );
+    final parsed = OpenSpoolNdefCodec.parse(
+      Uint8List(OpenSpoolNtagLayout.ntag216.userAreaSize)
+        ..setRange(0, tlv.length, tlv),
+    );
+    expect(parsed.subtype, List.filled(600, 'X').join());
   });
 
   test('OpenSpool rejects oversized NDEF', () {

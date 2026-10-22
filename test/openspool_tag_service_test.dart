@@ -6,16 +6,25 @@ import 'package:logger/logger.dart';
 import 'package:androrfid_chameleon/core/chameleon/bridge/chameleon.dart';
 import 'package:androrfid_chameleon/core/chameleon/helpers/definitions.dart';
 import 'package:androrfid_chameleon/data/openspool/openspool_data.dart';
+import 'package:androrfid_chameleon/data/openspool/openspool_ntag.dart';
 import 'package:androrfid_chameleon/services/openspool_tag_service.dart';
 
 class _FakeNtagCommunicator extends ChameleonCommunicator {
-  _FakeNtagCommunicator() : super(Logger(level: Level.off)) {
-    pages[3] = Uint8List.fromList([0xE1, 0x10, 0x3E, 0x00]);
+  _FakeNtagCommunicator({
+    OpenSpoolNtagType ntagType = OpenSpoolNtagType.ntag215,
+  }) : ntagType = ntagType,
+       pages = List.generate(
+         OpenSpoolNtagLayout.forType(ntagType).totalPages,
+         (_) => Uint8List(4),
+       ),
+       super(Logger(level: Level.off)) {
+    pages[3] = Uint8List.fromList(OpenSpoolNtagLayout.forType(ntagType).cc);
     pages[0] = Uint8List.fromList([0x04, 0x11, 0x22, 0x33]);
     pages[1] = Uint8List.fromList([0x44, 0x55, 0x66, 0x77]);
   }
 
-  final List<Uint8List> pages = List.generate(135, (_) => Uint8List(4));
+  final OpenSpoolNtagType ntagType;
+  final List<Uint8List> pages;
   bool present = true;
 
   @override
@@ -88,13 +97,54 @@ void main() {
     expect(restored.uid, [0x04, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66]);
   });
 
-  test('OpenSpoolTagService reports missing tag', () async {
-    final communicator = _FakeNtagCommunicator()..present = false;
+  test('OpenSpoolTagService reads and writes NTAG216', () async {
+    final communicator = _FakeNtagCommunicator(
+      ntagType: OpenSpoolNtagType.ntag216,
+    );
+    final service = OpenSpoolTagService(communicator);
+    final data = OpenSpoolTagData(
+      type: 'PETG',
+      colorHex: '#A5FF52',
+      brand: 'Snapmaker',
+      subtype: List.filled(600, 'X').join(),
+      minTemp: 220,
+      maxTemp: 250,
+      bedMinTemp: 70,
+      bedMaxTemp: 80,
+      weight: 750,
+      diameter: 1.75,
+    );
+
+    final actualType = await service.write(data, profile: OpenSpoolProfile.u1);
+    final restored = await service.read();
+
+    expect(actualType, OpenSpoolNtagType.ntag216);
+    expect(communicator.pages[3], [0xE1, 0x10, 0x6D, 0x00]);
+    expect(restored.ntagType, OpenSpoolNtagType.ntag216);
+    expect(restored.subtype, List.filled(600, 'X').join());
+  });
+
+  test('OpenSpoolTagService rejects NTAG213', () async {
+    final communicator = _FakeNtagCommunicator();
+    communicator.pages[3] = Uint8List.fromList([0xE1, 0x10, 0x12, 0x00]);
     final service = OpenSpoolTagService(communicator);
 
     expect(
       () => service.read(),
-      throwsA(isA<OpenSpoolTagException>()),
+      throwsA(
+        isA<OpenSpoolTagException>().having(
+          (error) => error.message,
+          'message',
+          contains('NTAG213'),
+        ),
+      ),
     );
+  });
+
+  test('OpenSpoolTagService reports missing tag', () async {
+    final communicator = _FakeNtagCommunicator()..present = false;
+    final service = OpenSpoolTagService(communicator);
+
+    expect(() => service.read(), throwsA(isA<OpenSpoolTagException>()));
   });
 }

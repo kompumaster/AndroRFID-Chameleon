@@ -12,6 +12,7 @@ import '../../app_state.dart';
 import '../../core/chameleon/helpers/utils.dart';
 import '../../data/openspool/openspool_bin_codec.dart';
 import '../../data/openspool/openspool_data.dart';
+import '../../data/openspool/openspool_ntag.dart';
 import '../../data/qidi/qidi_bin_codec.dart';
 import '../../data/qidi/qidi_data.dart';
 import '../../data/records/record_repository.dart';
@@ -157,6 +158,7 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _InfoRow(label: 'Метка', value: os.ntagType.label),
                     _InfoRow(label: 'Бренд', value: os.brand ?? '—'),
                     _InfoRow(label: 'Материал', value: os.type),
                     _InfoRow(label: 'Подтип', value: os.subtype ?? '—'),
@@ -219,7 +221,11 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             OutlinedButton.icon(
               onPressed: _busy ? null : _exportOpenSpool,
               icon: const Icon(Icons.save_alt),
-              label: const LText('Экспорт .bin (540)'),
+              label: LText(
+                os.ntagType == OpenSpoolNtagType.ntag216
+                    ? 'Экспорт .bin (924)'
+                    : 'Экспорт .bin (540)',
+              ),
             ),
             if (_record.openspoolProfile == OpenSpoolProfile.u1) ...[
               const SizedBox(height: 8),

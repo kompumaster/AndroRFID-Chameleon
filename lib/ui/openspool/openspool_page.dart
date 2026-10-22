@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../app_state.dart';
 import '../../core/ble/connection_service.dart';
 import '../../data/openspool/openspool_data.dart';
+import '../../data/openspool/openspool_ntag.dart';
 import '../../data/records/record_repository.dart';
 import '../../data/snapmaker/snapmaker_models.dart';
 import '../../l10n/app_translations.dart';
@@ -59,6 +60,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
   String _material = 'PLA';
   String _subtype = '';
   OpenSpoolTagData? _readData;
+  OpenSpoolNtagType _ntagType = OpenSpoolNtagType.ntag215;
   bool _busy = false;
   String? _readError;
   String? _writeError;
@@ -126,7 +128,9 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
           title: profile == OpenSpoolProfile.u1
               ? 'Чтение Snapmaker U1'
               : 'Чтение OpenSpool',
-          subtitle: 'NTAG215, CC E1 10 3E 00, MIME application/json.',
+          subtitle:
+              'NTAG215/216, CC E1 10 3E 00 / E1 10 6D 00, '
+              'MIME application/json.',
         ),
         if (!connected) ...[
           const SizedBox(height: 12),
@@ -151,7 +155,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
           const SizedBox(height: 12),
           const _HintCard(
             text:
-                'Приложите NTAG215 с OpenSpool-записью к Chameleon '
+                'Приложите NTAG215/216 с OpenSpool-записью к Chameleon '
                 'и нажмите «Прочитать метку».',
           ),
         ] else if (_readData != null)
@@ -166,7 +170,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
         else
           const _HintCard(
             text:
-                'Приложите NTAG215 с OpenSpool-записью к Chameleon '
+                'Приложите NTAG215/216 с OpenSpool-записью к Chameleon '
                 'и нажмите «Прочитать метку».',
           ),
       ],
@@ -191,7 +195,8 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
               ? 'Запись Snapmaker U1'
               : 'Запись OpenSpool',
           subtitle:
-              'JSON/NDEF будет записан в пользовательские страницы NTAG215.',
+              'JSON/NDEF будет записан в пользовательские страницы '
+              'NTAG215/216.',
         ),
         if (!connected) ...[
           const SizedBox(height: 12),
@@ -475,6 +480,7 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
           .map((value) => value.trim())
           .where((value) => value.isNotEmpty)
           .toList(),
+      ntagType: _ntagType,
     );
   }
 
@@ -495,7 +501,10 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
       if (!mounted) {
         return;
       }
-      setState(() => _readData = data);
+      setState(() {
+        _readData = data;
+        _ntagType = data.ntagType;
+      });
       _showMessage('OpenSpool-метка прочитана');
     } catch (e) {
       if (mounted) {
@@ -525,13 +534,18 @@ class _OpenSpoolPageState extends State<OpenSpoolPage>
     });
 
     try {
-      await OpenSpoolTagService(communicator)
+      final actualType = await OpenSpoolTagService(communicator)
           .write(data, profile: profile, tier: tier);
       if (!mounted) {
         return;
       }
-      setState(() => _readData = data);
-      _showMessage('OpenSpool-метка записана и проверена');
+      setState(() {
+        _ntagType = actualType;
+        _readData = data.withNtagType(actualType);
+      });
+      _showMessage(
+        'OpenSpool-метка записана и проверена (${actualType.label})',
+      );
     } catch (e) {
       if (mounted) {
         setState(() => _writeError = e.toString());
@@ -794,6 +808,7 @@ class _ReadResultCard extends StatelessWidget {
           children: [
             LText('Прочитано', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
+            _InfoRow(label: 'Метка', value: data.ntagType.label),
             _InfoRow(label: 'Бренд', value: data.brand ?? '—'),
             _InfoRow(label: 'Материал', value: data.type),
             _InfoRow(label: 'Подтип', value: data.subtype ?? '—'),

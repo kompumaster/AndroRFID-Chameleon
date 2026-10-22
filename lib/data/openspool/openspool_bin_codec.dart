@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import '../../core/chameleon/helpers/utils.dart';
 import 'openspool_data.dart';
 import 'openspool_ndef_codec.dart';
+import 'openspool_ntag.dart';
 
 class OpenSpoolBinException implements Exception {
   OpenSpoolBinException(this.message);
@@ -14,90 +15,79 @@ class OpenSpoolBinException implements Exception {
 }
 
 class OpenSpoolBinCodec {
-  static const int totalPages = 135;
-  static const int pageSize = 4;
-  static const int dumpSize = totalPages * pageSize;
-  static const int firstUserPage = 4;
-  static const int lastUserPage = 129;
-  static const int userAreaPages = lastUserPage - firstUserPage + 1;
-  static const int userAreaSize = userAreaPages * pageSize;
+  static const int ntag215DumpSize = 540;
+  static const int ntag216DumpSize = 924;
 
-  static const List<int> cc = [0xE1, 0x10, 0x3E, 0x00];
+  /// Legacy alias for NTAG215 export size.
+  static const int dumpSize = ntag215DumpSize;
+
+  static bool isSupportedDumpSize(int size) {
+    return OpenSpoolNtagLayout.fromDumpSize(size) != null;
+  }
 
   static Uint8List encode(
     OpenSpoolTagData data, {
     OpenSpoolProfile profile = OpenSpoolProfile.standard,
     OpenSpoolTier tier = OpenSpoolTier.standard,
+    OpenSpoolNtagType? ntagType,
     Uint8List? existingDump,
   }) {
+    final OpenSpoolNtagLayout layout;
+    final Uint8List dump;
     if (existingDump != null) {
-      if (existingDump.length != dumpSize) {
-        throw OpenSpoolBinException(
-          'Ожидался дамп $dumpSize байт, получено ${existingDump.length}.',
-        );
-      }
-      final dump = Uint8List.fromList(existingDump);
-      final tlv = OpenSpoolNdefCodec.build(
-        data,
-        profile: profile,
-        tier: tier,
-        maxLength: userAreaSize,
-      );
-      _writeUserArea(dump, tlv);
-      return dump;
+      layout = _layoutForDump(existingDump);
+      dump = Uint8List.fromList(existingDump);
+    } else {
+      layout = OpenSpoolNtagLayout.forType(ntagType ?? data.ntagType);
+      dump = Uint8List(layout.dumpSize);
+      final uid = (data.uid?.length == 7) ? data.uid! : _uidFor(data);
+      _writeHeader(dump, uid, layout);
     }
-
-    final dump = Uint8List(dumpSize);
-    final uid = (data.uid?.length == 7) ? data.uid! : _uidFor(data);
-    _writeHeader(dump, uid);
 
     final tlv = OpenSpoolNdefCodec.build(
       data,
       profile: profile,
       tier: tier,
-      maxLength: userAreaSize,
+      maxLength: layout.userAreaSize,
     );
-    _writeUserArea(dump, tlv);
+    _writeUserArea(dump, tlv, layout);
     return dump;
   }
 
   static OpenSpoolTagData decode(Uint8List dump) {
-    if (dump.length != dumpSize) {
-      throw OpenSpoolBinException(
-        'Ожидался .bin на $dumpSize байт (NTAG215, 135 страниц), '
-        'получено ${dump.length}.',
-      );
-    }
-    if (!_matches(dump.sublist(12, 16), cc)) {
-      throw OpenSpoolBinException(
-        'В дампе нет NTAG215 CC E1 10 3E 00.',
-      );
-    }
-
+    final layout = _layoutForDump(dump);
     final userArea = dump.sublist(
-      firstUserPage * pageSize,
-      (lastUserPage + 1) * pageSize,
+      OpenSpoolNtagLayout.firstUserPage * OpenSpoolNtagLayout.pageSize,
+      (layout.lastUserPage + 1) * OpenSpoolNtagLayout.pageSize,
     );
     final data = OpenSpoolNdefCodec.parse(userArea);
-    return OpenSpoolTagData(
-      type: data.type,
-      colorHex: data.colorHex,
-      brand: data.brand,
-      subtype: data.subtype,
-      alpha: data.alpha,
-      minTemp: data.minTemp,
-      maxTemp: data.maxTemp,
-      bedMinTemp: data.bedMinTemp,
-      bedMaxTemp: data.bedMaxTemp,
-      weight: data.weight,
-      diameter: data.diameter,
-      additionalColorHexes: data.additionalColorHexes,
-      rawJson: data.rawJson,
-      uid: Uint8List.fromList(dump.sublist(0, 7)),
-    );
+    return data
+        .withNtagType(layout.type)
+        .withUid(Uint8List.fromList(dump.sublist(0, 7)));
   }
 
-  static void _writeHeader(Uint8List dump, Uint8List uid) {
+  static OpenSpoolNtagLayout _layoutForDump(Uint8List dump) {
+    final layout = OpenSpoolNtagLayout.fromDumpSize(dump.length);
+    if (layout == null) {
+      throw OpenSpoolBinException(
+        'Ожидался .bin на $ntag215DumpSize байт (NTAG215) '
+        'или $ntag216DumpSize байт (NTAG216), получено ${dump.length}.',
+      );
+    }
+    if (!_matches(dump.sublist(12, 16), layout.cc)) {
+      throw OpenSpoolBinException(
+        'В дампе нет ${layout.type.label} CC '
+        '${layout.cc.map((byte) => byte.toRadixString(16).padLeft(2, '0').toUpperCase()).join(' ')}.',
+      );
+    }
+    return layout;
+  }
+
+  static void _writeHeader(
+    Uint8List dump,
+    Uint8List uid,
+    OpenSpoolNtagLayout layout,
+  ) {
     dump[0] = uid[0];
     dump[1] = uid[1];
     dump[2] = uid[2];
@@ -112,11 +102,16 @@ class OpenSpoolBinCodec {
     dump[9] = 0x48;
     dump[10] = 0x00;
     dump[11] = 0x00;
-    dump.setRange(12, 16, cc);
+    dump.setRange(12, 16, layout.cc);
   }
 
-  static void _writeUserArea(Uint8List dump, Uint8List tlv) {
-    final start = firstUserPage * pageSize;
+  static void _writeUserArea(
+    Uint8List dump,
+    Uint8List tlv,
+    OpenSpoolNtagLayout layout,
+  ) {
+    final start =
+        OpenSpoolNtagLayout.firstUserPage * OpenSpoolNtagLayout.pageSize;
     dump.setRange(start, start + tlv.length, tlv);
   }
 

@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
 import '../widgets/l_text.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../app_state.dart';
@@ -42,8 +44,7 @@ class _RecordsPageState extends State<RecordsPage> {
                     ),
                   ),
                   OutlinedButton.icon(
-                    onPressed:
-                        _importing ? null : () => _importBin(repository),
+                    onPressed: _importing ? null : () => _importBin(repository),
                     icon: _importing
                         ? const SizedBox.square(
                             dimension: 16,
@@ -112,7 +113,7 @@ class _RecordsPageState extends State<RecordsPage> {
       if (bytes.length == QidiBinCodec.dumpSize) {
         final data = QidiBinCodec.decode(bytes);
         record = await repository.saveQidi(model: model, data: data);
-      } else if (bytes.length == OpenSpoolBinCodec.dumpSize) {
+      } else if (OpenSpoolBinCodec.isSupportedDumpSize(bytes.length)) {
         final data = OpenSpoolBinCodec.decode(bytes);
         record = await repository.saveOpenSpool(
           data: data,
@@ -122,7 +123,7 @@ class _RecordsPageState extends State<RecordsPage> {
       } else {
         throw ArgumentError(
           'Неподдерживаемый размер .bin: ${bytes.length}. '
-          'Ожидается 1024 (QIDI) или 540 (OpenSpool).',
+          'Ожидается 1024 (QIDI), 540 (NTAG215) или 924 (NTAG216).',
         );
       }
 

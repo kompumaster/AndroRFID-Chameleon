@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:androrfid_chameleon/data/openspool/openspool_data.dart';
+import 'package:androrfid_chameleon/data/openspool/openspool_ntag.dart';
 import 'package:androrfid_chameleon/data/qidi/qidi_data.dart';
 import 'package:androrfid_chameleon/data/records/tag_record.dart';
 
@@ -70,6 +71,7 @@ void main() {
         weight: 750,
         diameter: 1.75,
         additionalColorHexes: const ['#FFFFFF'],
+        ntagType: OpenSpoolNtagType.ntag216,
       ),
     );
 
@@ -85,5 +87,6 @@ void main() {
     expect(restored.openspoolData!.colorHex, '#A5FF52');
     expect(restored.openspoolData!.weight, 750);
     expect(restored.openspoolData!.additionalColorHexes, ['#FFFFFF']);
+    expect(restored.openspoolData!.ntagType, OpenSpoolNtagType.ntag216);
   });
 }

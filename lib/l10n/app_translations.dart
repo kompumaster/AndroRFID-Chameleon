@@ -62,10 +62,16 @@ class AppTranslations {
     'Не удалось прочитать QIDI-метку. Проверьте, что это MIFARE Classic 1K и метка лежит на Chameleon. Ошибка: ': 'Could not read QIDI tag. Make sure it is MIFARE Classic 1K and on Chameleon. Error: ',
     'Не удалось записать QIDI-метку. Ошибка: ':
         'Could not write QIDI tag. Error: ',
-    'Не удалось прочитать OpenSpool-метку. Проверьте, что это NTAG215. Ошибка: ':
-        'Could not read OpenSpool tag. Make sure it is NTAG215. Error: ',
+    'Не удалось прочитать OpenSpool-метку. Проверьте, что это NTAG215/216. Ошибка: ':
+        'Could not read OpenSpool tag. Make sure it is NTAG215/216. Error: ',
     'Не удалось записать OpenSpool-метку. Ошибка: ':
         'Could not write OpenSpool tag. Error: ',
+    'NTAG213 не поддерживается. Используйте NTAG215 или NTAG216.':
+        'NTAG213 is not supported. Use NTAG215 or NTAG216.',
+    'Не удалось определить тип метки. Ожидается NTAG215/216, CC: ':
+        'Could not detect the tag type. Expected NTAG215/216, CC: ',
+    'OpenSpool-метка записана и проверена (':
+        'OpenSpool tag written and verified (',
     'U1 не вернул filament_detected для ToolHead ':
         'U1 did not return filament_detected for ToolHead ',
   };
@@ -157,14 +163,14 @@ class AppTranslations {
     'Неизвестно': 'Unknown',
     'Чтение OpenSpool': 'Read OpenSpool',
     'Чтение Snapmaker U1': 'Read Snapmaker U1',
-    'NTAG215, CC E1 10 3E 00, MIME application/json.':
-        'NTAG215, CC E1 10 3E 00, MIME application/json.',
-    'Приложите NTAG215 с OpenSpool-записью к Chameleon и нажмите «Прочитать метку».': 'Place an NTAG215 with an OpenSpool record on Chameleon and tap “Read tag”.',
+    'NTAG215/216, CC E1 10 3E 00 / E1 10 6D 00, MIME application/json.':
+        'NTAG215/216, CC E1 10 3E 00 / E1 10 6D 00, MIME application/json.',
+    'Приложите NTAG215/216 с OpenSpool-записью к Chameleon и нажмите «Прочитать метку».': 'Place an NTAG215/216 with an OpenSpool record on Chameleon and tap “Read tag”.',
     'OpenSpool-метка прочитана': 'OpenSpool tag read',
     'Запись OpenSpool': 'Write OpenSpool',
     'Запись Snapmaker U1': 'Write Snapmaker U1',
-    'JSON/NDEF будет записан в пользовательские страницы NTAG215.':
-        'JSON/NDEF will be written to the NTAG215 user pages.',
+    'JSON/NDEF будет записан в пользовательские страницы NTAG215/216.':
+        'JSON/NDEF will be written to the NTAG215/216 user pages.',
     'Версия данных': 'Data version',
     'Бренд': 'Brand',
     'Подтип (subtype)': 'Subtype',
@@ -204,6 +210,7 @@ class AppTranslations {
     'Записать на метку': 'Write to tag',
     'Экспорт .bin': 'Export .bin',
     'Экспорт .bin (540)': 'Export .bin (540)',
+    'Экспорт .bin (924)': 'Export .bin (924)',
     'Snapmaker U1': 'Snapmaker U1',
     'Телефон и принтер должны быть в одной Wi-Fi сети. Используется HTTP.':
         'Phone and printer must be on the same Wi-Fi network. HTTP is used.',
@@ -253,8 +260,8 @@ class AppTranslations {
     'будет удалена.': 'will be deleted.',
     'Метка не найдена. Приложите QIDI-метку к Chameleon.':
         'Tag not found. Place a QIDI tag on Chameleon.',
-    'Метка не найдена. Приложите NTAG215 к Chameleon.':
-        'Tag not found. Place an NTAG215 on Chameleon.',
+    'Метка не найдена. Приложите NTAG215/216 к Chameleon.':
+        'Tag not found. Place an NTAG215/216 on Chameleon.',
     'Проверка после записи OpenSpool не совпала.':
         'OpenSpool write verification failed.',
     'Chameleon не подтвердил запись блока 4.':
@@ -275,8 +282,8 @@ class AppTranslations {
     'Сохранить QIDI .bin': 'Save QIDI .bin',
     'Сохранить OpenSpool .bin': 'Save OpenSpool .bin',
     'Неподдерживаемый размер .bin': 'Unsupported .bin size',
-    'Ожидается 1024 (QIDI) или 540 (OpenSpool).':
-        'Expected 1024 (QIDI) or 540 (OpenSpool).',
+    'Ожидается 1024 (QIDI), 540 (NTAG215) или 924 (NTAG216).':
+        'Expected 1024 (QIDI), 540 (NTAG215), or 924 (NTAG216).',
     'байт вместо': 'bytes instead of',
     'QIDI': 'QIDI',
     'OpenSpool': 'OpenSpool',

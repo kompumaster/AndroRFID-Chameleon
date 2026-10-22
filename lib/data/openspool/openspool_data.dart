@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'openspool_ntag.dart';
+
 enum OpenSpoolProfile { standard, u1 }
 
 enum OpenSpoolTier { basic, standard, all }
@@ -165,6 +167,7 @@ class OpenSpoolTagData {
     this.additionalColorHexes = const [],
     this.rawJson,
     this.uid,
+    this.ntagType = OpenSpoolNtagType.ntag215,
   });
 
   final String type;
@@ -181,6 +184,7 @@ class OpenSpoolTagData {
   final List<String> additionalColorHexes;
   final String? rawJson;
   final Uint8List? uid;
+  final OpenSpoolNtagType ntagType;
 
   Map<String, dynamic> toJson({
     OpenSpoolProfile profile = OpenSpoolProfile.standard,
@@ -313,6 +317,27 @@ class OpenSpoolTagData {
       additionalColorHexes: additionalColorHexes,
       rawJson: rawJson,
       uid: value,
+      ntagType: ntagType,
+    );
+  }
+
+  OpenSpoolTagData withNtagType(OpenSpoolNtagType value) {
+    return OpenSpoolTagData(
+      type: type,
+      colorHex: colorHex,
+      brand: brand,
+      subtype: subtype,
+      alpha: alpha,
+      minTemp: minTemp,
+      maxTemp: maxTemp,
+      bedMinTemp: bedMinTemp,
+      bedMaxTemp: bedMaxTemp,
+      weight: weight,
+      diameter: diameter,
+      additionalColorHexes: additionalColorHexes,
+      rawJson: rawJson,
+      uid: uid,
+      ntagType: value,
     );
   }
 

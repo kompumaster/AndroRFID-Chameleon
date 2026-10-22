@@ -79,6 +79,7 @@ class AppTranslations {
   static const Map<String, String> _en = {
     'RFID Chameleon': 'RFID Chameleon',
     'RFID Chameleon · 1.0.0': 'RFID Chameleon · 1.0.0',
+    'RFID Chameleon · 1.1.0': 'RFID Chameleon · 1.1.0',
     'Подключение': 'Connection',
     'Подключение Chameleon': 'Chameleon connection',
     'Подключение к Chameleon': 'Connecting to Chameleon',

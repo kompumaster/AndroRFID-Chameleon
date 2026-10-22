@@ -20,6 +20,24 @@ void main() {
     ]);
   });
 
+  test('OpenSpool writes color_hex without a hash', () {
+    const data = OpenSpoolTagData(
+      type: 'PLA',
+      colorHex: '#FF0000',
+      additionalColorHexes: ['#FFFFFF', '#000000'],
+    );
+
+    final standard = data.toJson();
+    expect(standard['color_hex'], 'FF0000');
+
+    final u1 = data.toJson(
+      profile: OpenSpoolProfile.u1,
+      tier: OpenSpoolTier.all,
+    );
+    expect(u1['color_hex'], 'FF0000');
+    expect(u1['additional_color_hexes'], ['FFFFFF', '000000']);
+  });
+
   test('OpenSpool standard NDEF roundtrip', () {
     const data = OpenSpoolTagData(
       brand: 'QIDI',
@@ -143,10 +161,7 @@ void main() {
     );
 
     expect(
-      () => OpenSpoolNdefCodec.build(
-        data,
-        profile: OpenSpoolProfile.u1,
-      ),
+      () => OpenSpoolNdefCodec.build(data, profile: OpenSpoolProfile.u1),
       throwsA(isA<OpenSpoolFormatException>()),
     );
   });

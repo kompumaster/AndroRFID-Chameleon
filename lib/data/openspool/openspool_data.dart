@@ -190,7 +190,7 @@ class OpenSpoolTagData {
       'protocol': 'openspool',
       'version': '1.0',
       'type': type.trim(),
-      'color_hex': normalizeHexColor(colorHex),
+      'color_hex': normalizeHexColor(colorHex, withHash: false),
     };
 
     final trimmedBrand = brand?.trim() ?? '';
@@ -231,7 +231,7 @@ class OpenSpoolTagData {
       }
       final nonEmpty = additionalColorHexes
           .where((value) => value.trim().isNotEmpty)
-          .map((value) => normalizeHexColor(value))
+          .map((value) => normalizeHexColor(value, withHash: false))
           .toList();
       if (nonEmpty.isNotEmpty) {
         json['additional_color_hexes'] = nonEmpty;

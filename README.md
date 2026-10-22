@@ -2,7 +2,7 @@
 
 **[English version](README_en.md)**
 
-Android-приложение для чтения и записи RFID-меток филамента через **Chameleon Ultra** по Bluetooth LE. Переносит ключевые сценарии BoxRFID-Touch на телефон: QIDI, OpenSpool, Snapmaker U1, сохранённые метки и импорт/экспорт `.bin`.
+Android-приложение для чтения и записи RFID-меток филамента через **[Chameleon Ultra](https://github.com/RfidResearchGroup/ChameleonULtra)** по Bluetooth LE. Переносит ключевые сценарии BoxRFID-Touch на телефон: QIDI, OpenSpool, Snapmaker U1, сохранённые метки и импорт/экспорт `.bin`.
 
 Приложение работает **только по BLE** — USB-подключение не используется. Управлять самим Chameleon (слоты, эмуляция, DFU, прошивка) нельзя: он выступает как RFID-ридер/писатель.
 

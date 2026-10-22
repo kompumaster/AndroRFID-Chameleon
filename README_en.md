@@ -117,43 +117,9 @@ lib/
   l10n/                  Russian–English translations
 ```
 
-## Build and checks
+## Build
 
-```bash
-flutter pub get
-dart analyze
-flutter test --concurrency=1
-flutter run
-```
-
-### APK variants
-
-Universal APK for all architectures:
-
-```bash
-flutter build apk --release
-```
-
-Per-ABI APKs:
-
-```bash
-flutter build apk --release --split-per-abi
-```
-
-The files are copied to `relase/` after the build:
-
-- `RFID_Chameleon.apk` — universal;
-- `RFID_Chameleon-arm64-v8a.apk` — modern phones;
-- `RFID_Chameleon-armeabi-v7a.apk` — older 32-bit devices;
-- `RFID_Chameleon-x86_64.apk` — emulators and x86 devices.
-
-### Release APK signing
-
-Signing parameters are read from `android/key.properties`, and the key is stored in `android/keys/release-keystore.jks`. Both files are excluded from Git.
-
-Use `android/key.properties.example` as a template. If `android/key.properties` is missing, the release build falls back to debug signing and Gradle prints a warning.
-
-Keep the keystore and passwords in a safe place: without them, updates for an already installed app cannot be released.
+The project is built with standard Flutter tooling. The release APK is signed with a separate key; the signing parameters and the key itself are stored locally and are not part of the repository. Universal and per-ABI builds are placed in `relase/`.
 
 ## Status and limitations
 

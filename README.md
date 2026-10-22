@@ -117,43 +117,9 @@ lib/
   l10n/                  русско-английские переводы
 ```
 
-## Сборка и проверка
+## Сборка
 
-```bash
-flutter pub get
-dart analyze
-flutter test --concurrency=1
-flutter run
-```
-
-### Варианты APK
-
-Универсальный APK для всех архитектур:
-
-```bash
-flutter build apk --release
-```
-
-Раздельные APK:
-
-```bash
-flutter build apk --release --split-per-abi
-```
-
-После сборки файлы копируются в `relase/`:
-
-- `RFID_Chameleon.apk` — universal;
-- `RFID_Chameleon-arm64-v8a.apk` — современные телефоны;
-- `RFID_Chameleon-armeabi-v7a.apk` — старые 32-битные устройства;
-- `RFID_Chameleon-x86_64.apk` — эмулятор и x86-устройства.
-
-### Подпись release APK
-
-Параметры подписи читаются из `android/key.properties`, ключ хранится в `android/keys/release-keystore.jks`. Оба файла исключены из Git.
-
-Шаблон параметров — `android/key.properties.example`. Если `android/key.properties` отсутствует, release собирается с debug-подписью и Gradle выводит предупреждение.
-
-Keystore и пароли нужно сохранить в надёжном месте: без них невозможно выпустить обновление для уже установленного приложения.
+Проект собирается стандартными средствами Flutter. Release APK подписывается отдельным ключом; параметры подписи и сам ключ хранятся локально и не входят в репозиторий. Готовые universal и per-ABI сборки складываются в `relase/`.
 
 ## Статус и ограничения
 

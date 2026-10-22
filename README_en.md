@@ -135,7 +135,13 @@ flutter build apk --release
 Output file: `build/app/outputs/flutter-apk/app-release.apk`.
 It is copied to the project root as `RFID_Chameleon.apk`.
 
-> The release build is currently signed with the debug key. For public distribution, create your own keystore and configure `signingConfig` in `android/app/build.gradle.kts`.
+### Release APK signing
+
+Signing parameters are read from `android/key.properties`, and the key is stored in `android/keys/release-keystore.jks`. Both files are excluded from Git.
+
+Use `android/key.properties.example` as a template. If `android/key.properties` is missing, the release build falls back to debug signing and Gradle prints a warning.
+
+Keep the keystore and passwords in a safe place: without them, updates for an already installed app cannot be released.
 
 ## Status and limitations
 

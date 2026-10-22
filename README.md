@@ -146,7 +146,13 @@ Set-Location D:\
 subst R: /D
 ```
 
-> Сейчас release подписан debug-ключом. Для публичного распространения нужно создать собственный keystore и настроить `signingConfig` в `android/app/build.gradle.kts`.
+### Подпись release APK
+
+Параметры подписи читаются из `android/key.properties`, ключ хранится в `android/keys/release-keystore.jks`. Оба файла исключены из Git.
+
+Шаблон параметров — `android/key.properties.example`. Если `android/key.properties` отсутствует, release собирается с debug-подписью и Gradle выводит предупреждение.
+
+Keystore и пароли нужно сохранить в надёжном месте: без них невозможно выпустить обновление для уже установленного приложения.
 
 ## Статус и ограничения
 

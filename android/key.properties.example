@@ -1,0 +1,6 @@
+# Copy this file to android/key.properties and fill in the real values.
+# Both android/key.properties and android/keys/ are ignored by Git.
+storeFile=../keys/release-keystore.jks
+storePassword=CHANGE_ME
+keyAlias=rfid-chameleon
+keyPassword=CHANGE_ME

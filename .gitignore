@@ -36,6 +36,7 @@ app.*.map.json
 **/.kotlin/
 **/local.properties
 **/key.properties
+/android/keys/
 **/*.jks
 **/*.keystore
 **/*.p12

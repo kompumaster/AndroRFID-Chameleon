@@ -50,6 +50,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Local release output
+/relase/
+
 # Build artifacts and packages
 *.apk
 *.aab

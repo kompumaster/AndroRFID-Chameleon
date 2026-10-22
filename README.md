@@ -133,7 +133,7 @@ flutter build apk --release
 ```
 
 Готовый файл: `build/app/outputs/flutter-apk/app-release.apk`.
-В корне проекта он сохраняется как `RFID_Chameleon.apk`.
+Для публикации APK копируется в `relase/RFID_Chameleon.apk`.
 
 ### Подпись release APK
 

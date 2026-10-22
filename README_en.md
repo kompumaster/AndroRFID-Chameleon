@@ -133,7 +133,7 @@ flutter build apk --release
 ```
 
 Output file: `build/app/outputs/flutter-apk/app-release.apk`.
-It is copied to the project root as `RFID_Chameleon.apk`.
+For distribution, the APK is copied to `relase/RFID_Chameleon.apk`.
 
 ### Release APK signing
 

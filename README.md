@@ -126,14 +126,26 @@ flutter test --concurrency=1
 flutter run
 ```
 
-Release APK:
+### Варианты APK
+
+Универсальный APK для всех архитектур:
 
 ```bash
 flutter build apk --release
 ```
 
-Готовый файл: `build/app/outputs/flutter-apk/app-release.apk`.
-Для публикации APK копируется в `relase/RFID_Chameleon.apk`.
+Раздельные APK:
+
+```bash
+flutter build apk --release --split-per-abi
+```
+
+После сборки файлы копируются в `relase/`:
+
+- `RFID_Chameleon.apk` — universal;
+- `RFID_Chameleon-arm64-v8a.apk` — современные телефоны;
+- `RFID_Chameleon-armeabi-v7a.apk` — старые 32-битные устройства;
+- `RFID_Chameleon-x86_64.apk` — эмулятор и x86-устройства.
 
 ### Подпись release APK
 

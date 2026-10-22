@@ -126,14 +126,26 @@ flutter test --concurrency=1
 flutter run
 ```
 
-Release APK:
+### APK variants
+
+Universal APK for all architectures:
 
 ```bash
 flutter build apk --release
 ```
 
-Output file: `build/app/outputs/flutter-apk/app-release.apk`.
-For distribution, the APK is copied to `relase/RFID_Chameleon.apk`.
+Per-ABI APKs:
+
+```bash
+flutter build apk --release --split-per-abi
+```
+
+The files are copied to `relase/` after the build:
+
+- `RFID_Chameleon.apk` — universal;
+- `RFID_Chameleon-arm64-v8a.apk` — modern phones;
+- `RFID_Chameleon-armeabi-v7a.apk` — older 32-bit devices;
+- `RFID_Chameleon-x86_64.apk` — emulators and x86 devices.
 
 ### Release APK signing
 
